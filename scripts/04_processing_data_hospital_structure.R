@@ -1,24 +1,17 @@
-library(tmap)
 library(dplyr)
 library(sf)
-library(readr)
 library(spData)
-library(devtools)
-library(viridis)
-library(RColorBrewer)
-library(ggpubr)
-library(GGally)
+library(brazilmaps) #remotes::install_github("rpradosiqueira/brazilmaps")
 
-saude <- read.csv("data/raw/hospital_indicatiors.csv")
+saude <- read.csv("data/raw/hospital_indicators.csv")
 covid <- read.csv("outputs/model_table_glm_covid_IFHR.csv")
 sus <- read.csv("data/raw/sus_dependent.csv")
 
-# correcao a 100.000
+# Correcting data for 100.000 hab
 saude <- saude %>%
   mutate(prop_med_100000 = prop_med_10000 * 10,
          prop_MI_100000 = prop_MI_10000 * 10,
          UTI_100000 = UTI_10mil * 10)
-names(covid)
 
 dados <- covid %>%
   group_by(sg_uf) %>%
@@ -26,17 +19,19 @@ dados <- covid %>%
   select(sg_uf, fit) %>%
   as.data.frame()
 
-###junta medico e dados##
-
+# Binding data
 dados2 <- full_join(dados, saude, by = c("sg_uf" = "sigla"))
 
-# shape de estados - não tem sigla ¬¬-----
+# Reading shapefile of states - no acronyms ¬¬ ---------------------------------
 br <- brazilmaps::get_brmap(geo = "State")
 
-# junta o shapefile do brasil com a tabela de dados----
-med_int_shape <- br %>% left_join(dados2, by = "State")
+# Binding data and shapefile ---------------------------------------------------
+med_int_shape <- br %>%
+  left_join(dados2, by = "State") %>%
+  mutate(IHFR = fit)
 
-med_int_shape$IHFR <- med_int_shape$fit
+# Exporting data for the next scripts ------------------------------------------
+if (!dir.exists("data/shapefile/")) {dir.create("data/shapefile", recursive = TRUE)}
 
-# mapa peak IHFR
-med_int_shape$sg_uf
+# WIP!!!!
+st_write(med_int_shape, "data/shapefile/hospital_indicators.shp")
