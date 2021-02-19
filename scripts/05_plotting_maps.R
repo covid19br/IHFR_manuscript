@@ -5,8 +5,6 @@ library(tmap)
 library(dplyr)
 library(sf)
 library(spData)
-library(viridis)
-library(RColorBrewer)
 library(ggpubr)
 library(GGally)
 
