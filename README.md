@@ -6,7 +6,7 @@ Pre-print available at [medRxiv](https://www.medrxiv.org/)
 
    
     .
-    ├── data/ # raw data
+    ├── data/ # raw and processed data
     ├── figs/ # figures included in the manuscript
     ├── functions/ # acessory R functions to run scripts
     ├── IHFR_manuscript.Rproj
