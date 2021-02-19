@@ -94,7 +94,7 @@ sus
 # 6.range and save -------------------------------------------------------------
 a <- tmap_arrange(fit_map, med_int, med, uti, sus)
 a
-tmap_save(a, "figs/figure_02.png")
+tmap_save(a, "figs/figure_02.tiff")
 tmap_save(a, "figs/figure_02.svg")
 
 
