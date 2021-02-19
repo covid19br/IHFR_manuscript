@@ -39,6 +39,7 @@ uf_ordered <- df %>% filter(age_clas == "60 or over") %>%
 
 
 # 1. Basic plot ----------------------------------------------------------------
+# This is just to visualize data and extract the legend
 p1 <- ggplot(df, aes(x = week, y = let_obs, group = age_clas)) +
   geom_point(aes(color = age_clas), size = 0.95, alpha = 0.7) +
   geom_line(aes(y = fit, color = age_clas), size = 0.2) +
@@ -94,7 +95,7 @@ for (i in 1:length(filename)) {
 
 
 # 3.2. Arranging and saving the main plot --------------------------------------
-tiff("figs/figure01.tiff",
+tiff("figs/figure_01.tiff",
      width = 180, height = 210, units = "mm", res = 300)
 ggarrange(
   # by hand using ordered UF
