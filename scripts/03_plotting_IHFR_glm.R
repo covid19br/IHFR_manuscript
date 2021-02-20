@@ -12,7 +12,6 @@ library(cowplot)
 
 # Loading functions
 source("functions/plots_ufs_fac.R")
-source("functions/get_legend.R")
 
 pal <- wes_palette("Zissou1", 4, "continuous")
 
@@ -38,28 +37,7 @@ uf_ordered <- df %>% filter(age_clas == "60 or over") %>%
   pull()
 
 
-# 1. Basic plot ----------------------------------------------------------------
-# This is just to visualize data and extract the legend
-p1 <- ggplot(df, aes(x = week, y = let_obs, group = age_clas)) +
-  geom_point(aes(color = age_clas), size = 0.95, alpha = 0.7) +
-  geom_line(aes(y = fit, color = age_clas), size = 0.2) +
-  scale_color_manual(values = pal, name = "Age class") +
-  facet_wrap(~sg_uf, ncol = 4) +
-  geom_ribbon(aes(ymin = lwr, ymax = upr, fill = age_clas), alpha = 0.2) +
-  scale_fill_manual(values = pal, name = "Age class") +
-  theme_classic() +
-  xlab("Week") +
-  ylab("In-hospital lethality") +
-  theme(strip.background = element_blank(),
-        legend.position = c(0.95, 0.6),
-        legend.title = element_text(size = 7),
-        legend.text = element_text(size = 7),
-        legend.direction = "horizontal")
-
-# Extracting legend from p1
-legenda <- get_legend(p1)
-
-# 2. Plotting for each state separately ----------------------------------------
+# 1. Plotting for each state separately ----------------------------------------
 
 # Binding IHFR data and hospitalizations
 df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
@@ -72,10 +50,10 @@ legenda <- plot_ufs_fac(df = df_hosp, strip_size = 8, strip_color = "white", pal
 legenda_bw <- plot_ufs_fac(df = df_hosp, file_prefix = "bw_covid", strip_size = 8, strip_color = "white", bw = TRUE)
 
 
-# 3. Reading plots on disk and arranging in a panel ----------------------------
+# 2. Reading plots on disk and arranging in a panel ----------------------------
 # This is the only way to arrange graphics w/ two y-axis varying in scale
 
-# 3.1. Drawing the plots -------------------------------------------------------
+# 2.1. Drawing the plots -------------------------------------------------------
 # File paths to figure
 filename <- list.files("figs/ufs", pattern = '^covid', full.names = TRUE)
 
@@ -95,7 +73,7 @@ for (i in 1:length(filename)) {
 }
 
 
-# 3.2. Arranging and saving the main plot --------------------------------------
+# 2.2. Arranging and saving the main plot --------------------------------------
 tiff("figs/figure_01.tiff",
      width = 180, height = 210, units = "mm", res = 300)
 ggarrange(
@@ -112,9 +90,9 @@ ggarrange(
 )
 dev.off()
 
-# 4. Black and white plots -----------------------------------------------------
+# 3. Black and white plots -----------------------------------------------------
 
-# 4.1. Drawing the plots -------------------------------------------------------
+# 3.1. Drawing the plots -------------------------------------------------------
 # File paths to figure
 filename_bw <- list.files("figs/ufs", pattern = '^bw_covid', full.names = TRUE)
 
@@ -134,14 +112,14 @@ for (i in 1:length(filename_bw)) {
 }
 
 
-# 4.2. Arranging and saving the main plot --------------------------------------
+# 3.2. Arranging and saving the main plot --------------------------------------
 tiff("figs/figure_01_bw.tiff",
      width = 180, height = 210, units = "mm", res = 300)
 ggarrange(
   # by hand using ordered UF
   # paste(uf_ordered, collapse = ", ")
   AM, ES, RO, PA, AL, RJ, PB, MA, CE, BA, PE, RN, GO, MT, SP, RS, PI, MS, DF, SC, PR, MG,
-  legenda,
+  legenda_bw,
   nrow = 6,
   ncol = 4,
   # left = "IHFR",
