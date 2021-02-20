@@ -68,7 +68,8 @@ df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
   mutate(fac = ceiling(max(hosp)/100) * 100, bar = hosp/fac)
 
 # Making plots by UF using accessory function
-plot_ufs_fac(df = df_hosp, strip_size = 8, strip_color = "white")
+legenda <- plot_ufs_fac(df = df_hosp, strip_size = 8, strip_color = "white", pal = pal)
+legenda_bw <- plot_ufs_fac(df = df_hosp, file_prefix = "bw_covid", strip_size = 8, strip_color = "white", bw = TRUE)
 
 
 # 3. Reading plots on disk and arranging in a panel ----------------------------
@@ -76,7 +77,7 @@ plot_ufs_fac(df = df_hosp, strip_size = 8, strip_color = "white")
 
 # 3.1. Drawing the plots -------------------------------------------------------
 # File paths to figure
-filename <- list.files("figs/ufs", pattern = 'covid', full.names = TRUE)
+filename <- list.files("figs/ufs", pattern = '^covid', full.names = TRUE)
 
 # Getting the exact UF acronym with respect to the filename
 uf <- sapply(strsplit(filename, "covid_"), function(x) x[2]) %>%
@@ -96,6 +97,45 @@ for (i in 1:length(filename)) {
 
 # 3.2. Arranging and saving the main plot --------------------------------------
 tiff("figs/figure_01.tiff",
+     width = 180, height = 210, units = "mm", res = 300)
+ggarrange(
+  # by hand using ordered UF
+  # paste(uf_ordered, collapse = ", ")
+  AM, ES, RO, PA, AL, RJ, PB, MA, CE, BA, PE, RN, GO, MT, SP, RS, PI, MS, DF, SC, PR, MG,
+  legenda,
+  nrow = 6,
+  ncol = 4,
+  # left = "IHFR",
+  # bottom = "Week",
+  labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
+  font.label = list(size = 9, face = "plain")
+)
+dev.off()
+
+# 4. Black and white plots -----------------------------------------------------
+
+# 4.1. Drawing the plots -------------------------------------------------------
+# File paths to figure
+filename_bw <- list.files("figs/ufs", pattern = '^bw_covid', full.names = TRUE)
+
+# Getting the exact UF acronym with respect to the filename
+uf_bw <- sapply(strsplit(filename_bw, "covid_"), function(x) x[2]) %>%
+  gsub(".png", "", .)
+
+# Drawing the graphs
+plot_list_bw <- list()
+
+for (i in 1:length(filename_bw)) {
+  # making plots
+  plot_list_bw[[i]] <- ggdraw() +
+    draw_image(filename_bw[i])
+  # creating objects named after the UF
+  assign(uf_bw[i], plot_list_bw[[i]], envir = .GlobalEnv)
+}
+
+
+# 4.2. Arranging and saving the main plot --------------------------------------
+tiff("figs/figure_01_bw.tiff",
      width = 180, height = 210, units = "mm", res = 300)
 ggarrange(
   # by hand using ordered UF

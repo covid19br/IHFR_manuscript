@@ -3,6 +3,7 @@
 
 # Libraries
 library(ggplot2)
+library(ggpubr)
 
 df <- read.csv("data/processed/04-med_int.csv")
 
@@ -47,4 +48,4 @@ d <- ggplot(df, aes(x = SUS, y = IHFR)) +
 ggarrange(a, b, c, d,
           labels = paste0(LETTERS[1:4], "."),
           font.label = list(size = 11, face = "plain"))
-ggsave("plots/maps/scatter_plot_end.png", width = 6, height = 5)
+ggsave("figs/figure_03.tiff", width = 6, height = 5)
