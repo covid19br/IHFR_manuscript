@@ -29,7 +29,7 @@ br <- brazilmaps::get_brmap(geo = "State")
 
 # Binding data and shapefile ---------------------------------------------------
 med_int_shape <- br %>%
-  left_join(dados2, by = c("State", "nome")) %>%
+  left_join(dados2, by = c("State")) %>%
   mutate(IHFR = fit)
 
 # Exporting data for the next scripts ------------------------------------------
