@@ -11,26 +11,52 @@ library(GGally)
 # Reading data
 med_int_shape <- read_sf("data/shapefile/hospital_indicators.shp")
 
-# Modifying map labels to fill later by hand
-med_int_shape$label <- med_int_shape$sg_uf
-med_int_shape$label[is.na(med_int_shape$label)] <- "MT"
-#med_int_shape$label[med_int_shape$sg_uf %in% c("DF", "ES", "RJ", "SE", "AL", "PE", "PB", "RN", "SC", "GO", "PI", "AC")] <- NA
+# General parameters -----------------------------------------------------------
 
-# 1. Peak IHFR map -------------------------------------------------------------
+# Sandard frame and legend for all plots
 my_layout <- tm_layout(legend.title.size = 1,
                        frame = FALSE,
                        title.size = 0.8,
                        title.position = c("left", "top"))
 
+# Modfying label positions by hand
+med_int_shape$xmod <- 0
+
+med_int_shape$xmod[med_int_shape$sg_uf == "RN"] <- 1
+med_int_shape$xmod[med_int_shape$sg_uf == "PB"] <- 1
+med_int_shape$xmod[med_int_shape$sg_uf == "PE"] <- 0.7
+med_int_shape$xmod[med_int_shape$sg_uf == "AL"] <- 0.5
+med_int_shape$xmod[med_int_shape$sg_uf == "SE"] <- 0.7
+med_int_shape$xmod[med_int_shape$sg_uf == "ES"] <- 0.75
+med_int_shape$xmod[med_int_shape$sg_uf == "RJ"] <- 0.8
+med_int_shape$xmod[med_int_shape$sg_uf == "SC"] <- 0.2
+
+med_int_shape$ymod <- 0
+med_int_shape$ymod[med_int_shape$sg_uf == "AC"] <- 0.1
+med_int_shape$ymod[med_int_shape$sg_uf == "DF"] <- 0.4
+med_int_shape$ymod[med_int_shape$sg_uf == "SE"] <- -0.3
+med_int_shape$ymod[med_int_shape$sg_uf == "AL"] <- -0.2
+med_int_shape$ymod[med_int_shape$sg_uf == "RJ"] <- -0.2
+
+med_int_shape$col <- ifelse(med_int_shape$sg_uf %in% c("AM", "RO", "PA"),
+                            "white", "black")
+#med_int_shape$label[med_int_shape$sg_uf %in% c("DF", "ES", "RJ", "SE", "AL", "PE", "PB", "RN", "SC", "GO", "PI", "AC")] <- NA
+
+# 1. Peak IHFR map -------------------------------------------------------------
+
+
 fit_map <- tm_shape(med_int_shape) +
   tm_borders() +
-  tm_text("label", size = 0.5, remove.overlap = T, auto.placement = FALSE) +
+  tm_text("sg_uf", size = 0.5,
+          remove.overlap = TRUE,
+          xmod = "xmod", ymod = "ymod", col = "col") +
   tm_fill("IHFR",
           title = "Peak IHFR",
           style = "cont",
           colorNA = "gray") +
   tm_style("col_blind") +
-  tm_layout(title = "A.") +
+  tm_layout(title = "A.",
+            inner.margins = c(0, 0, 0, 0.1)) +
   tm_text("") +
   my_layout
 
@@ -85,8 +111,8 @@ sus
 
 # 6. Arrange and save -------------------------------------------------------------
 a <- tmap_arrange(fit_map, med_int, med, uti, sus)
-a
-tmap_save(a, "figs/figure_02.tiff")
+#a
+tmap_save(a, "figs/figure_02.tiff", width = 200, height = 180, dpi = 300, units = "mm")
 tmap_save(a, "figs/figure_02.svg")
 
 # Same figure, now black and white
