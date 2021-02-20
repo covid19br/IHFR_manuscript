@@ -22,20 +22,23 @@ my_layout <- tm_layout(legend.title.size = 1,
 # Modfying label positions by hand
 med_int_shape$xmod <- 0
 
-med_int_shape$xmod[med_int_shape$sg_uf == "RN"] <- 1
+med_int_shape$xmod[med_int_shape$sg_uf == "RN"] <- 0.2
 med_int_shape$xmod[med_int_shape$sg_uf == "PB"] <- 1
-med_int_shape$xmod[med_int_shape$sg_uf == "PE"] <- 0.7
-med_int_shape$xmod[med_int_shape$sg_uf == "AL"] <- 0.5
-med_int_shape$xmod[med_int_shape$sg_uf == "SE"] <- 0.7
+med_int_shape$xmod[med_int_shape$sg_uf == "PE"] <- 1.3
+med_int_shape$xmod[med_int_shape$sg_uf == "AL"] <- 0.6
+med_int_shape$xmod[med_int_shape$sg_uf == "SE"] <- 0.6
 med_int_shape$xmod[med_int_shape$sg_uf == "ES"] <- 0.75
 med_int_shape$xmod[med_int_shape$sg_uf == "RJ"] <- 0.8
 med_int_shape$xmod[med_int_shape$sg_uf == "SC"] <- 0.2
 
 med_int_shape$ymod <- 0
+med_int_shape$ymod[med_int_shape$sg_uf == "PB"] <- .2
+med_int_shape$ymod[med_int_shape$sg_uf == "PI"] <- -.1
+med_int_shape$ymod[med_int_shape$sg_uf == "RN"] <- 0.6
 med_int_shape$ymod[med_int_shape$sg_uf == "AC"] <- 0.1
 med_int_shape$ymod[med_int_shape$sg_uf == "DF"] <- 0.4
 med_int_shape$ymod[med_int_shape$sg_uf == "SE"] <- -0.3
-med_int_shape$ymod[med_int_shape$sg_uf == "AL"] <- -0.2
+med_int_shape$ymod[med_int_shape$sg_uf == "AL"] <- -0.1
 med_int_shape$ymod[med_int_shape$sg_uf == "RJ"] <- -0.2
 
 med_int_shape$col <- ifelse(med_int_shape$sg_uf %in% c("AM", "RO", "PA"),
@@ -44,10 +47,9 @@ med_int_shape$col <- ifelse(med_int_shape$sg_uf %in% c("AM", "RO", "PA"),
 
 # 1. Peak IHFR map -------------------------------------------------------------
 
-
 fit_map <- tm_shape(med_int_shape) +
   tm_borders() +
-  tm_text("sg_uf", size = 0.5,
+  tm_text("sg_uf", size = 0.45,
           remove.overlap = TRUE,
           xmod = "xmod", ymod = "ymod", col = "col") +
   tm_fill("IHFR",
@@ -113,15 +115,17 @@ sus
 a <- tmap_arrange(fit_map, med_int, med, uti, sus)
 #a
 tmap_save(a, "figs/figure_02.tiff", width = 200, height = 180, dpi = 300, units = "mm")
-tmap_save(a, "figs/figure_02.svg")
+
 
 # Same figure, now black and white
-aa <- tmap_arrange(fit_map + tm_style("bw") + tm_layout(title = "A.") + my_layout,
+aa <- tmap_arrange(fit_map +
+                     tm_style("bw") +
+                     tm_layout(title = "A.", inner.margins = c(0, 0, 0, 0.1)) +
+                     my_layout,
                    med_int + tm_style("bw") + tm_layout(title = "B.") + my_layout,
                    med + tm_style("bw") + tm_layout(title = "C.") + my_layout,
                    uti + tm_style("bw") + tm_layout(title = "D.") + my_layout,
                    sus + tm_style("bw") + tm_layout(title = "E.") + my_layout)
-aa
+#aa
 tmap_save(aa, "figs/figure_02_bw.tiff")
-tmap_save(aa, "figs/figure_02_bw.svg")
 
