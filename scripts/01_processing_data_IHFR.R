@@ -28,7 +28,7 @@ if (!file.exists(file_name)) {
 data_raw <- read.sivep(dir = "data/raw/", escala = "pais", data = data.sivep)
 
 # Setting the last date to cut database
-last.date <- "2020_03_26"
+last.date <- "2021_03_26"
 
 # Filtering data to last.date
 df <- data_raw %>%
@@ -106,3 +106,4 @@ hosp_week <- srag %>%
 write.csv(hosp_week,
           file = paste0("data/processed/", "hospitalizados_srag_week", "_", last.date, ".csv"),
           row.names = FALSE)
+
