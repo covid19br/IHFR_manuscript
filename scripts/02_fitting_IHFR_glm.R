@@ -11,7 +11,7 @@ source("functions/cut_weeks.R")
 source("functions/model_selection.R")
 
 # 1. Loading and filtering data ------------------------------------------------
-last_date <- "2020_09_28"
+last_date <- "2021_03_26"
 
 covid <- read_csv(paste0("data/processed/summary_covid_IFHR_", last_date, ".csv"))
 

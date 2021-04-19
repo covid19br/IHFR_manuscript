@@ -14,17 +14,21 @@ source("functions/read.sivep.R")
 # Downloading the most recent SIVEP database from our repository
 # https://github.com/covid19br/central_covid
 # SIVEP date
-data.sivep <- "2021_02_01"
+data.sivep <- "2021_04_12"
+file_name <- paste0("data/raw/SRAGHospitalizado_", data.sivep, ".csv.xz")
 
 if (!dir.exists("data/raw")) {dir.create("data/raw", recursive = TRUE)}
-download_sivep <- download.file(url = paste0("https://github.com/covid19br/central_covid/blob/master/dados/SIVEP-Gripe/SRAGHospitalizado_", data.sivep, ".csv.xz?raw=true"),
-                                destfile = "data/raw/SRAGHospitalizado_2021_02_01.csv.xz")
+
+if (!file.exists(file_name)) {
+  download_sivep <- download.file(url = paste0("https://github.com/covid19br/central_covid/blob/master/dados/SIVEP-Gripe/SRAGHospitalizado_", data.sivep, ".csv.xz?raw=true"),
+                                  destfile = file_name)
+}
 
 # Reading SIVEP w/ accessory function
 data_raw <- read.sivep(dir = "data/raw/", escala = "pais", data = data.sivep)
 
 # Setting the last date to cut database
-last.date <- "2020_09_28"
+last.date <- "2020_03_26"
 
 # Filtering data to last.date
 df <- data_raw %>%
@@ -67,8 +71,7 @@ srag$week <- epiweek(srag$dt_sin_pri)
 # 2. Summarizing letality ------------------------------------------------------
 
 # 2.1. COVID ----
-tabela  <-
-  covid %>%
+tabela  <- covid %>%
   group_by(week, age_clas, sg_uf) %>%
   summarise(sobre = sum(evolucao == 1), obitos = sum(evolucao == 2))
 
@@ -97,7 +100,8 @@ write.csv(tabela2,
 hosp_week <- srag %>%
   group_by(week, sg_uf) %>%
   summarise(hosp = n()) %>%
-  filter(week < 36 & week >= 10)
+  #filter(week < 36 & week >= 10)
+  filter(week >= 10)
 
 write.csv(hosp_week,
           file = paste0("data/processed/", "hospitalizados_srag_week", "_", last.date, ".csv"),
