@@ -9,6 +9,7 @@ library(readr)
 
 # Loading functions
 source("functions/read.sivep.R")
+source("functions/end.of.epiweek.R")
 
 # 1.  Downloading and filtering data -------------------------------------------
 # Downloading the most recent SIVEP database from our repository
@@ -62,7 +63,7 @@ covid <- df %>%
   select(dt_sin_pri, evolucao, age_clas, sg_uf, uti)
 
 # Creating column w/ epidemiological week
-covid$week <- epiweek(covid$dt_sin_pri)
+covid$week <- end.of.epiweek(covid$dt_sin_pri)
 
 
 # Filtering SRAG hospitalizations only
@@ -74,7 +75,7 @@ srag <- df %>%
   select(dt_sin_pri, evolucao, age_clas,sg_uf, uti)
 
 # Creating column w/ epidemiological week
-srag$week <- epiweek(srag$dt_sin_pri)
+srag$week <- end.of.epiweek(srag$dt_sin_pri)
 
 # 2. Summarizing letality ------------------------------------------------------
 
