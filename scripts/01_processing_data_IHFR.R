@@ -38,9 +38,9 @@ data_raw <- bind_rows(data_raw_list)
 # Setting the last date to cut database
 last.date <- "2021_05_29"
 
-# Filtering data to last.date
+# Filtering data to last.date using date of first symptoms
 df <- data_raw %>%
-  filter(dt_notific <= as_date(last.date))
+  filter(dt_sin_pri <= as_date(last.date))
 
 # Converting age to numeric
 df$nu_idade_n <- as.numeric(df$nu_idade_n)
@@ -50,8 +50,8 @@ df <- df %>%
   mutate(age_clas = case_when(nu_idade_n >= 0 & nu_idade_n <= 19 ~ "age_0_19",
                               nu_idade_n > 19 & nu_idade_n <= 39 ~ "age_20_39",
                               nu_idade_n > 39 & nu_idade_n <= 59 ~ "age_40_59",
-                              nu_idade_n > 59 & nu_idade_n <= 75 ~ "age_60_75",
-                              nu_idade_n > 75 ~ 'age_75'))
+                              nu_idade_n > 59 & nu_idade_n <= 74 ~ "age_60_75",
+                              nu_idade_n >= 75 ~ 'age_75'))
 
 
 # Filtering COVID hospitalizations only
