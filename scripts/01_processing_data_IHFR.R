@@ -14,21 +14,28 @@ source("functions/read.sivep.R")
 # Downloading the most recent SIVEP database from our repository
 # https://github.com/covid19br/central_covid
 # SIVEP date
-data.sivep <- "2021_04_12"
-file_name <- paste0("data/raw/SRAGHospitalizado_", data.sivep, ".csv.xz")
+data.sivep <- "2021_08_23"
+file_suffix <- paste0(data.sivep, c(".csv.xz", ".csv.21.xz"))
 
-if (!dir.exists("data/raw")) {dir.create("data/raw", recursive = TRUE)}
+dir_name <- paste0("data/raw/part_", seq_along(file_suffix))
+file_name <- paste0(dir_name, "/SRAGHospitalizado_", file_suffix)
 
-if (!file.exists(file_name)) {
-  download_sivep <- download.file(url = paste0("https://github.com/covid19br/central_covid/blob/master/dados/SIVEP-Gripe/SRAGHospitalizado_", data.sivep, ".csv.xz?raw=true"),
-                                  destfile = file_name)
+if (!all(dir.exists(dir_name))) {sapply(dir_name, dir.create, recursive = TRUE)}
+
+for (i in seq_along(file_name)) {
+  if (!file.exists(file_name[i])){
+    download.file(url = paste0("https://github.com/covid19br/central_covid/blob/master/dados/SIVEP-Gripe/SRAGHospitalizado_", file_suffix[i], "?raw=true"),
+                  destfile = file_name[i])
+  }
 }
 
+
 # Reading SIVEP w/ accessory function
-data_raw <- read.sivep(dir = "data/raw/", escala = "pais", data = data.sivep)
+data_raw_list <- lapply(dir_name, function(x) read.sivep(dir = x, escala = "pais", data = data.sivep))
+data_raw <- bind_rows(data_raw_list)
 
 # Setting the last date to cut database
-last.date <- "2021_03_26"
+last.date <- "2021_05_29"
 
 # Filtering data to last.date
 df <- data_raw %>%
@@ -42,7 +49,8 @@ df <- df %>%
   mutate(age_clas = case_when(nu_idade_n >= 0 & nu_idade_n <= 19 ~ "age_0_19",
                               nu_idade_n > 19 & nu_idade_n <= 39 ~ "age_20_39",
                               nu_idade_n > 39 & nu_idade_n <= 59 ~ "age_40_59",
-                              nu_idade_n >= 60 ~ "age_60"))
+                              nu_idade_n > 59 & nu_idade_n <= 75 ~ "age_60_75",
+                              nu_idade_n > 75 ~ 'age_75'))
 
 
 # Filtering COVID hospitalizations only
