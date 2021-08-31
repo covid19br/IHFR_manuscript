@@ -1,23 +1,24 @@
-# Script to fit GLM to IFRH ----------------------------------------------------
+# Script to fit GAM to IFRH ----------------------------------------------------
 
 # Libraries
 library(readr)
 library(dplyr)
 library(bbmle)
 library(tidyr)
+library(mgcv)
 
 # Loading functions
 source("functions/cut_weeks.R")
-source("functions/model_selection.R")
+source("functions/gam_model_selection.R")
 
 # 1. Loading and filtering data ------------------------------------------------
-last_date <- "2021_03_26"
+last_date <- "2021_05_29"
 
 covid <- read_csv(paste0("data/processed/summary_covid_IFHR_", last_date, ".csv"))
 
-# 1.1. Filtering weeks and cases: from 50rd case and cutting the last 4 weeks ----
+# 1.1. Filtering weeks and cases: from 50rd case
 cut_ini <- 30 #cases
-cut_end <- 4 #weeks
+cut_end <- 0 #weeks, already cutting w/ last_date
 
 # Using function to cut weeks and add epidemiological week column standardized for all states
 df_covid <- cut_weeks(covid, cut_ini, cut_end)
@@ -34,9 +35,12 @@ estados <- n_covid$sg_uf[n_covid$n > 1000]
 df_covid <- df_covid %>%
   filter(sg_uf %in% estados)
 
-# 2. Fitting glm ---------------------------------------------------------------
+df_covid$sg_uf <- as.factor(df_covid$sg_uf)
+df_covid$age_clas <- as.factor(df_covid$age_clas)
 
-mod_covid <- model_selection(df_covid)
+# 2. Fitting gam ---------------------------------------------------------------
+
+mod_covid <- gam_model_selection(df_covid)
 
 # Model selection results
 mod_covid$aic_tab
@@ -46,10 +50,10 @@ summary(mod_covid$modelos$m_full)
 
 # Calculating predicted values + SE
 
-pred_covid_glm <- predict(mod_covid$modelos$m_full, type = "response", se.fit = TRUE)
-df_covid_glm <- data.frame(df_covid, fit = pred_covid_glm$fit,
-                           upr = pred_covid_glm$fit + 2*pred_covid_glm$se.fit,
-                           lwr = pred_covid_glm$fit - 2*pred_covid_glm$se.fit)
+pred_covid_gam <- predict(mod_covid$modelos$m_full, type = "response", se.fit = TRUE)
+df_covid_gam <- data.frame(df_covid, fit = pred_covid_gam$fit,
+                           upr = pred_covid_gam$fit + 2 * pred_covid_gam$se.fit,
+                           lwr = pred_covid_gam$fit - 2 * pred_covid_gam$se.fit)
 
 
 
@@ -69,7 +73,7 @@ aic_df <- as.data.frame(mod_covid$aic_tab) %>%
 # 3. Exporting tables ----------------------------------------------------------
 if (!dir.exists("outputs")) {dir.create("outputs")}
 
-write.csv(df_covid_glm, paste0("outputs/model_table_glm_covid_IFHR.csv"),
+write.csv(df_covid_gam, paste0("outputs/model_table_gam_covid_IFHR.csv"),
           row.names = FALSE)
-write.csv(aic_df, paste0("outputs/aic_table_glm_covid_IFHR.csv"),
+write.csv(aic_df, paste0("outputs/aic_table_gam_covid_IFHR.csv"),
           row.names = TRUE)

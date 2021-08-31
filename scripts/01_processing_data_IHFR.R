@@ -1,4 +1,4 @@
-# Script to process data of IHFR and SRAG hospitalizations ---------------------
+# Script to process data of in-hospital mortality and SRAG hospitalizations
 
 # Loading libraries
 library(ISOweek)
@@ -24,7 +24,7 @@ file_name <- paste0(dir_name, "/SRAGHospitalizado_", file_suffix)
 if (!all(dir.exists(dir_name))) {sapply(dir_name, dir.create, recursive = TRUE)}
 
 for (i in seq_along(file_name)) {
-  if (!file.exists(file_name[i])){
+  if (!file.exists(file_name[i])) {
     download.file(url = paste0("https://github.com/covid19br/central_covid/blob/master/dados/SIVEP-Gripe/SRAGHospitalizado_", file_suffix[i], "?raw=true"),
                   destfile = file_name[i])
   }

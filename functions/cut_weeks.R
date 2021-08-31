@@ -28,8 +28,21 @@ cut_weeks <- function(data, #data frame w/ week colum as numeric
   ## Adding colum of epi week per state to df
   df_week <- df %>%
     left_join(week_uf, by = "sg_uf") %>%
-    mutate(week_uf = (week - min) + 1) %>%
-    filter(week_uf > 0)
+    mutate(week_n = (week - min)) %>%
+    filter(week_n >= 0)
 
-  return(df_week)
+  ##transforming weeks in numbers
+  ##maybe it is not the best way, but it works!
+
+  unique_weeks <- df_week %>% group_by(sg_uf, week) %>%
+    summarise(n = n()) %>%
+    select(sg_uf, week) %>%
+    mutate(week_uf = 1:length(week))
+
+  df_week2 <- df_week %>%  left_join(unique_weeks, by = c("week","sg_uf"))
+
+  df_week2 <- df_week2[ , c(-7, -8)]
+
+  return(df_week2)
+
 }

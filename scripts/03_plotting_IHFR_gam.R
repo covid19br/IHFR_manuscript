@@ -1,4 +1,4 @@
-# Script to plot IHFR and hospitalizations -------------------------------------
+# Script to plot in-hospital mortality and hospitalizations
 
 # Libraries
 library(ggplot2)
@@ -19,7 +19,7 @@ pal <- wes_palette("Zissou1", 4, "continuous")
 df <- read_csv("outputs/model_table_glm_covid_IFHR.csv")
 
 # Hospitalization data
-hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2020_09_28.csv")
+hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2021_03_26.csv")
 
 # Converting age group for the legend
 class_new <- c("0-19", "20-39", "40-59", "60 or over")
@@ -39,7 +39,7 @@ uf_ordered <- df %>% filter(age_clas == "60 or over") %>%
 
 # 1. Plotting for each state separately ----------------------------------------
 
-# Binding IHFR data and hospitalizations
+# Binding in-hospital mortality data and hospitalizations
 df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
   # Creating column w/ factor for the second axis
   group_by(sg_uf) %>%
@@ -79,11 +79,11 @@ tiff("figs/figure_01.tiff",
 ggarrange(
   # by hand using ordered UF
   # paste(uf_ordered, collapse = ", ")
-  AM, ES, RO, PA, AL, RJ, PB, MA, CE, BA, PE, RN, GO, MT, SP, RS, PI, MS, DF, SC, PR, MG,
+  SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
   legenda,
-  nrow = 6,
+  nrow = 7,
   ncol = 4,
-  # left = "IHFR",
+  # left = "In-hospital mortality",
   # bottom = "Week",
   labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
   font.label = list(size = 9, face = "plain")
@@ -118,11 +118,11 @@ tiff("figs/figure_01_bw.tiff",
 ggarrange(
   # by hand using ordered UF
   # paste(uf_ordered, collapse = ", ")
-  AM, ES, RO, PA, AL, RJ, PB, MA, CE, BA, PE, RN, GO, MT, SP, RS, PI, MS, DF, SC, PR, MG,
+  SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
   legenda_bw,
-  nrow = 6,
+  nrow = 7,
   ncol = 4,
-  # left = "IHFR",
+  # left = "In-hospital mortality",
   # bottom = "Week",
   labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
   font.label = list(size = 9, face = "plain")

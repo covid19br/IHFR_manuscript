@@ -17,7 +17,7 @@ a <- ggplot(df, aes(x = pMI, y = IHFR)) +
   stat_cor(method = "spearman", label.x = 3.8, label.y = y_pos, size = my_size) +
   theme_classic(base_size = 10) +
   xlab("Intensivists/100,000 hab") +
-  ylab("IHFR peak")
+  ylab("In-hospital mortality peak")
 
 # 2. Physicians ----------------------------------------------------------------
 b <- ggplot(df, aes(x = pmed, y = IHFR)) +
@@ -35,7 +35,7 @@ c <- ggplot(df, aes(x = UTI, y = IHFR)) +
   stat_cor(method = "spearman", label.x = 35, label.y = y_pos, size = my_size) +
   theme_classic(base_size = 10) +
   xlab("ICU beds/100,000 hab") +
-  ylab("IHFR peak")
+  ylab("In-hospital mortality peak")
 
 # 4. SUS -----------------------------------------------------------------------
 d <- ggplot(df, aes(x = SUS, y = IHFR)) +

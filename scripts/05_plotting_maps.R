@@ -45,7 +45,7 @@ med_int_shape$col <- ifelse(med_int_shape$sg_uf %in% c("AM", "RO", "PA"),
                             "white", "black")
 #med_int_shape$label[med_int_shape$sg_uf %in% c("DF", "ES", "RJ", "SE", "AL", "PE", "PB", "RN", "SC", "GO", "PI", "AC")] <- NA
 
-# 1. Peak IHFR map -------------------------------------------------------------
+# 1. Peak in-hospital mortality map --------------------------------------------
 
 fit_map <- tm_shape(med_int_shape) +
   tm_borders() +
@@ -53,7 +53,7 @@ fit_map <- tm_shape(med_int_shape) +
           remove.overlap = TRUE,
           xmod = "xmod", ymod = "ymod", col = "col") +
   tm_fill("IHFR",
-          title = "Peak IHFR",
+          title = "Peak of in-hospital mortality",
           style = "cont",
           colorNA = "gray") +
   tm_style("col_blind") +
