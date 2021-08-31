@@ -22,14 +22,14 @@ df <- read_csv("outputs/model_table_glm_covid_IFHR.csv")
 hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2021_03_26.csv")
 
 # Converting age group for the legend
-class_new <- c("0-19", "20-39", "40-59", "60 or over")
+class_new <- c("0-19", "20-39", "40-59", "60-74", "75 or over")
 names(class_new) <- unique(df$age_clas)
 
 df$age_clas <- str_replace_all(df$age_clas, class_new)
 df$age_clas <- str_replace_all(df$age_clas, class_new)
 
 # Ordering states by letality
-uf_ordered <- df %>% filter(age_clas == "60 or over") %>%
+uf_ordered <- df %>% filter(age_clas == "75 or over") %>%
   group_by(sg_uf) %>%
   summarise(max = max(fit)) %>%
   arrange(desc(max)) %>%
@@ -85,7 +85,7 @@ ggarrange(
   ncol = 4,
   # left = "In-hospital mortality",
   # bottom = "Week",
-  labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
+  labels = paste0(LETTERS[seq_along(uf_ordered)], ".   ", uf_ordered),
   font.label = list(size = 9, face = "plain")
 )
 dev.off()
