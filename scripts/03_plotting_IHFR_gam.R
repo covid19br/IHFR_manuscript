@@ -8,18 +8,26 @@ library(stringr)
 library(readr)
 library(ggpubr)
 library(cowplot)
+library(magick)
 # Also library libmagick++-dev needed
 
 # Loading functions
 source("functions/plots_ufs_fac.R")
 
-pal <- wes_palette("Zissou1", 4, "continuous")
+#pal <- wes_palette("Darjeeling2", 5, "continuous")
+pal<- c( "#E69F00", "#56B4E9",  
+                       "#F0E442", "#0072B2", "#CC79A7")
+
+#safe_colorblind_palette <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+ #                            "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
 
 # Reading model outputs
-df <- read_csv("outputs/model_table_glm_covid_IFHR.csv")
+df <- read_csv("outputs/model_table_gam_covid_IFHR.csv")
 
 # Hospitalization data
-hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2021_03_26.csv")
+
+###mudar esse dado
+hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2021-07-30.csv")
 
 # Converting age group for the legend
 class_new <- c("0-19", "20-39", "40-59", "60-74", "75 or over")
@@ -40,6 +48,8 @@ uf_ordered <- df %>% filter(age_clas == "75 or over") %>%
 # 1. Plotting for each state separately ----------------------------------------
 
 # Binding in-hospital mortality data and hospitalizations
+str(df_hosp)
+
 df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
   # Creating column w/ factor for the second axis
   group_by(sg_uf) %>%
@@ -83,10 +93,10 @@ ggarrange(
   legenda,
   nrow = 7,
   ncol = 4,
-  # left = "In-hospital mortality",
+   #left = "In-hospital mortality",
   # bottom = "Week",
-  labels = paste0(LETTERS[seq_along(uf_ordered)], ".   ", uf_ordered),
-  font.label = list(size = 9, face = "plain")
+  labels = paste0( uf_ordered),
+  font.label = list(size = 10, face = "plain")
 )
 dev.off()
 
@@ -114,7 +124,7 @@ for (i in 1:length(filename_bw)) {
 
 # 3.2. Arranging and saving the main plot --------------------------------------
 tiff("figs/figure_01_bw.tiff",
-     width = 180, height = 210, units = "mm", res = 300)
+     width = 360, height = 220, units = "mm", res = 300)
 ggarrange(
   # by hand using ordered UF
   # paste(uf_ordered, collapse = ", ")
@@ -125,6 +135,6 @@ ggarrange(
   # left = "In-hospital mortality",
   # bottom = "Week",
   labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
-  font.label = list(size = 9, face = "plain")
+  font.label = list(size = 5, face = "plain")
 )
 dev.off()

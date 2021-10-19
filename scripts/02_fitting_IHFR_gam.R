@@ -12,7 +12,7 @@ source("functions/cut_weeks.R")
 source("functions/gam_model_selection.R")
 
 # 1. Loading and filtering data ------------------------------------------------
-last_date <- "2021_05_29"
+last_date <- "2021-07-30"
 
 covid <- read_csv(paste0("data/processed/summary_covid_IFHR_", last_date, ".csv"))
 

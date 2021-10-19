@@ -19,8 +19,8 @@ plot_ufs_fac <- function(df,
                          file_prefix = "covid",
                          x_lab = "",
                          y_lab = "",
-                         axis_size = 6,
-                         strip_size = 6,
+                         axis_size = 12,
+                         strip_size = 12,
                          strip_color,
                          bw = FALSE,
                          pal = pal) {
@@ -51,16 +51,16 @@ plot_ufs_fac <- function(df,
     if (!bw) {
 
     plott <- ggplot(df2, aes(x = week, y = fit)) +
-      geom_bar(data = df2, aes(x = week, y = bar, width = 1),
+      geom_bar(data = df2, aes(x = week, y = bar, width = 2),
                stat = "identity", fill = "gray",
-               position = position_dodge(), alpha = 0.15) +
-      geom_line(aes(color = age_clas), size = 0.2) +
-      geom_point(aes(x = week, y = let_obs, color = age_clas), size = 0.75, alpha = 0.7) +
+               position = position_dodge(), alpha = 0.6) +
+      geom_line(aes(color = age_clas), size = 0.4) +
+      geom_point(aes(x = week, y = let_obs, color = age_clas), size = 0.6, alpha = 0.7) +
       scale_color_manual(values = pal, name = leg_title) +
       facet_wrap(~ sg_uf, ncol = 4, scales = "free") +
       geom_ribbon(aes(ymin = lwr,
                       ymax = upr,
-                      fill = age_clas), alpha = 0.2) +
+                      fill = age_clas), alpha = 0.4) +
       scale_fill_manual(values = pal, name = leg_title) +
       theme_classic() +
       xlab(x_lab) +
@@ -68,7 +68,8 @@ plot_ufs_fac <- function(df,
         name = y_lab,
         limits = c(0, 1),
         sec.axis = sec_axis(~ . * fac_lab)) +
-      legend_theme
+        theme(axis.text=element_text(size=20)) +
+        legend_theme
 
 
     } else {
@@ -79,10 +80,10 @@ plot_ufs_fac <- function(df,
       plott <- ggplot(df2, aes(x = week, y = fit)) +
         geom_bar(data = df2, aes(x = week, y = bar, width = 1),
                  stat = "identity", fill = "gray",
-                 position = position_dodge(), alpha = 0.15) +
-        geom_line(aes(color = age_clas), size = 0.2) +
+                 position = position_dodge(), alpha = 0.30) +
+        geom_line(aes(color = age_clas), size = 0.5) +
         scale_color_manual(values = pal, name = leg_title) +
-        geom_point(aes(x = week, y = let_obs, shape = age_clas), size = 0.75, alpha = 0.7) +
+        geom_point(aes(x = week, y = let_obs, shape = age_clas), size = 0.75, alpha = 0.5) +
         #scale_color_manual(values = pal, name = leg_title) +
         scale_shape(name = leg_title) +
         facet_wrap(~ sg_uf, ncol = 4, scales = "free") +
@@ -108,7 +109,8 @@ plot_ufs_fac <- function(df,
     # Saving plot ----
     if (!dir.exists("figs/ufs")) {dir.create("figs/ufs", recursive = TRUE)}
 
-    ggsave(filename = paste0("figs/ufs/", file_prefix, "_", uf, ".png"), width = 45, height = 35, units = "mm")
+    ggsave(filename = paste0("figs/ufs/", file_prefix, "_", uf, ".png"), width = 160, height = 100, units = "mm")
   }
   return(legenda)
 }
+

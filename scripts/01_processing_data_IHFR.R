@@ -15,7 +15,7 @@ source("functions/end.of.epiweek.R")
 # Downloading the most recent SIVEP database from our repository
 # https://github.com/covid19br/central_covid
 # SIVEP date
-data.sivep <- "2021_08_23"
+data.sivep <- "2021-07-30"
 file_suffix <- paste0(data.sivep, c(".csv.xz", ".csv.21.xz"))
 
 dir_name <- paste0("data/raw/part_", seq_along(file_suffix))
