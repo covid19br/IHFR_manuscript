@@ -50,8 +50,8 @@ df <- df %>%
   mutate(age_clas = case_when(nu_idade_n >= 0 & nu_idade_n <= 19 ~ "age_0_19",
                               nu_idade_n > 19 & nu_idade_n <= 39 ~ "age_20_39",
                               nu_idade_n > 39 & nu_idade_n <= 59 ~ "age_40_59",
-                              nu_idade_n > 59 & nu_idade_n <= 74 ~ "age_60_75",
-                              nu_idade_n >= 75 ~ 'age_75'))
+                              nu_idade_n > 59 & nu_idade_n <= 79 ~ "age_60_79",
+                              nu_idade_n >= 80 ~ 'age_80'))
 
 
 # Filtering COVID hospitalizations only
