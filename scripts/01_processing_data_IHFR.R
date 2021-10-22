@@ -15,7 +15,7 @@ source("functions/end.of.epiweek.R")
 # Downloading the most recent SIVEP database from our repository
 # https://github.com/covid19br/central_covid
 # SIVEP date
-data.sivep <- "2021-07-30"
+#data.sivep <- "2021-07-30"
 file_suffix <- paste0(data.sivep, c(".csv.xz", ".csv.21.xz"))
 
 dir_name <- paste0("data/raw/part_", seq_along(file_suffix))
@@ -36,7 +36,7 @@ data_raw_list <- lapply(dir_name, function(x) read.sivep(dir = x, escala = "pais
 data_raw <- bind_rows(data_raw_list)
 
 # Setting the last date to cut database
-last.date <- "2021_05_29"
+last.date <-  "2021-07-30"
 
 # Filtering data to last.date using date of first symptoms
 df <- data_raw %>%
@@ -94,6 +94,9 @@ tabela2  <-
 
 tabela2$let_obs <- tabela2$obitos/(tabela2$obitos + tabela2$sobre)
 
+
+        
+
 if (!dir.exists("data/processed")) {dir.create("data/processed", recursive = TRUE)}
 
 # 2.3. Exporting data ----
@@ -115,4 +118,27 @@ hosp_week <- srag %>%
 write.csv(hosp_week,
           file = paste0("data/processed/", "hospitalizados_srag_week", "_", last.date, ".csv"),
           row.names = FALSE)
+
+
+#####proportion of hospitalizations by age group
+
+
+prop1<- covid %>% 
+  group_by(sg_uf, week, age_clas)%>%
+  summarise(hosp=sum(sobre,obitos)) %>%
+  mutate(freq=hosp/sum(hosp))
+
+prop2<- srag %>% 
+  group_by(sg_uf, week, age_clas)%>%
+  summarise(hosp=sum(sobre,obitos)) %>%
+  mutate(freq=hosp/sum(hosp))
+
+write.csv(prop1,
+          file = paste0("data/processed/", "proporcao_covid_week", "_", last.date, ".csv"),
+          row.names = FALSE)
+
+write.csv(prop2,
+          file = paste0("data/processed/", "proporcao_srag_week", "_", last.date, ".csv"),
+          row.names = FALSE)
+
 
