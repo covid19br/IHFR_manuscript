@@ -15,7 +15,7 @@ source("functions/end.of.epiweek.R")
 # Downloading the most recent SIVEP database from our repository
 # https://github.com/covid19br/central_covid
 # SIVEP date
-#data.sivep <- "2021-07-30"
+data.sivep <- "2021_11_01"
 file_suffix <- paste0(data.sivep, c(".csv.xz", ".csv.21.xz"))
 
 dir_name <- paste0("data/raw/part_", seq_along(file_suffix))
@@ -95,8 +95,6 @@ tabela2  <-
 tabela2$let_obs <- tabela2$obitos/(tabela2$obitos + tabela2$sobre)
 
 
-        
-
 if (!dir.exists("data/processed")) {dir.create("data/processed", recursive = TRUE)}
 
 # 2.3. Exporting data ----
@@ -109,7 +107,7 @@ write.csv(tabela2,
 
 
 # 3. Summarizing SRAG hospitalizations -----------------------------------------
-hosp_week <- srag %>%
+hosp_week <- tabela2 %>%
   group_by(week, sg_uf) %>%
   summarise(hosp = n()) %>%
   #filter(week < 36 & week >= 10)
@@ -121,14 +119,12 @@ write.csv(hosp_week,
 
 
 #####proportion of hospitalizations by age group
-
-
-prop1<- covid %>% 
+prop1 <- tabela %>%
   group_by(sg_uf, week, age_clas)%>%
   summarise(hosp=sum(sobre,obitos)) %>%
   mutate(freq=hosp/sum(hosp))
 
-prop2<- srag %>% 
+prop2 <- tabela2 %>%
   group_by(sg_uf, week, age_clas)%>%
   summarise(hosp=sum(sobre,obitos)) %>%
   mutate(freq=hosp/sum(hosp))
