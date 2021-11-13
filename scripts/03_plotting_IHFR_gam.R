@@ -30,14 +30,14 @@ df <- read_csv("outputs/model_table_gam_covid_IFHR.csv")
 hosp_week <- read_csv("data/processed/hospitalizados_srag_week_2021-07-30.csv")
 
 # Converting age group for the legend
-class_new <- c("0-19", "20-39", "40-59", "60-74", "75 or over")
+class_new <- c("0-19", "20-39", "40-59", "60-79", "80 or over")
 names(class_new) <- unique(df$age_clas)
 
 df$age_clas <- str_replace_all(df$age_clas, class_new)
 df$age_clas <- str_replace_all(df$age_clas, class_new)
 
 # Ordering states by letality
-uf_ordered <- df %>% filter(age_clas == "75 or over") %>%
+uf_ordered <- df %>% filter(age_clas == "80 or over") %>%
   group_by(sg_uf) %>%
   summarise(max = max(fit)) %>%
   arrange(desc(max)) %>%
@@ -48,7 +48,6 @@ uf_ordered <- df %>% filter(age_clas == "75 or over") %>%
 # 1. Plotting for each state separately ----------------------------------------
 
 # Binding in-hospital mortality data and hospitalizations
-str(df_hosp)
 
 df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
   # Creating column w/ factor for the second axis
@@ -56,8 +55,8 @@ df_hosp <- left_join(df, hosp_week, by = c("week", "sg_uf")) %>%
   mutate(fac = ceiling(max(hosp)/100) * 100, bar = hosp/fac)
 
 # Making plots by UF using accessory function
-legenda <- plot_ufs_fac(df = df_hosp, strip_size = 8, strip_color = "white", pal = pal)
-legenda_bw <- plot_ufs_fac(df = df_hosp, file_prefix = "bw_covid", strip_size = 8, strip_color = "white", bw = TRUE)
+legenda <- plot_ufs_fac(df = df_hosp, strip_size = 12, strip_color = "white", pal = pal)
+#legenda_bw <- plot_ufs_fac(df = df_hosp, file_prefix = "bw_covid", strip_size = 8, strip_color = "white", bw = TRUE)
 
 
 # 2. Reading plots on disk and arranging in a panel ----------------------------
@@ -84,57 +83,58 @@ for (i in 1:length(filename)) {
 
 
 # 2.2. Arranging and saving the main plot --------------------------------------
+
 tiff("figs/figure_01.tiff",
-     width = 180, height = 210, units = "mm", res = 300)
+     width = 200, height = 230, units = "mm", res = 300)
 ggarrange(
   # by hand using ordered UF
-  # paste(uf_ordered, collapse = ", ")
+  #paste(uf_ordered, collapse = ", "),
   SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
-  legenda,
   nrow = 7,
   ncol = 4,
-   #left = "In-hospital mortality",
-  # bottom = "Week",
-  labels = paste0( uf_ordered),
+  left = "In-hospital mortality",
+  bottom = "Week",
+  labels = paste0(uf_ordered),
   font.label = list(size = 10, face = "plain")
 )
 dev.off()
+
 
 # 3. Black and white plots -----------------------------------------------------
 
 # 3.1. Drawing the plots -------------------------------------------------------
 # File paths to figure
-filename_bw <- list.files("figs/ufs", pattern = '^bw_covid', full.names = TRUE)
+#filename_bw <- list.files("figs/ufs", pattern = '^bw_covid', full.names = TRUE)
 
 # Getting the exact UF acronym with respect to the filename
-uf_bw <- sapply(strsplit(filename_bw, "covid_"), function(x) x[2]) %>%
-  gsub(".png", "", .)
+#uf_bw <- sapply(strsplit(filename_bw, "covid_"), function(x) x[2]) %>%
+#  gsub(".png", "", .)
 
 # Drawing the graphs
-plot_list_bw <- list()
+#plot_list_bw <- list()
 
-for (i in 1:length(filename_bw)) {
-  # making plots
-  plot_list_bw[[i]] <- ggdraw() +
-    draw_image(filename_bw[i])
-  # creating objects named after the UF
-  assign(uf_bw[i], plot_list_bw[[i]], envir = .GlobalEnv)
-}
+#for (i in 1:length(filename_bw)) {
+# making plots
+#  plot_list_bw[[i]] <- ggdraw() +
+#    draw_image(filename_bw[i])
+# creating objects named after the UF
+#  assign(uf_bw[i], plot_list_bw[[i]], envir = .GlobalEnv)
+#}
 
 
 # 3.2. Arranging and saving the main plot --------------------------------------
-tiff("figs/figure_01_bw.tiff",
-     width = 360, height = 220, units = "mm", res = 300)
-ggarrange(
-  # by hand using ordered UF
-  # paste(uf_ordered, collapse = ", ")
-  SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
-  legenda_bw,
-  nrow = 7,
-  ncol = 4,
-  # left = "In-hospital mortality",
-  # bottom = "Week",
-  labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
-  font.label = list(size = 5, face = "plain")
-)
-dev.off()
+#tiff("figs/figure_01_bw.tiff",
+#     width = 360, height = 220, units = "mm", res = 300)
+#ggarrange(
+# by hand using ordered UF
+# paste(uf_ordered, collapse = ", ")
+#  SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
+# legenda_bw,
+# nrow = 7,
+# ncol = 4,
+# left = "In-hospital mortality",
+# bottom = "Week",
+#  labels = paste0(LETTERS[1:22], ".   ", uf_ordered),
+#  font.label = list(size = 5, face = "plain")
+#)
+#dev.off()

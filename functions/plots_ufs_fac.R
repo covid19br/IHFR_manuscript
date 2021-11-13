@@ -19,8 +19,8 @@ plot_ufs_fac <- function(df,
                          file_prefix = "covid",
                          x_lab = "",
                          y_lab = "",
-                         axis_size = 12,
-                         strip_size = 12,
+                         axis_size = 16,
+                         strip_size = 16,
                          strip_color,
                          bw = FALSE,
                          pal = pal) {
@@ -42,13 +42,15 @@ plot_ufs_fac <- function(df,
                       plot.margin = unit(c(0, 0, 0, 0.05), "cm"))
 
     legend_theme <- theme(strip.background = element_blank(),
-                          legend.position = c(0.95, 0.6),
+                          legend.position = c(2.0, 0.1),
                           legend.title = element_text(size = 7),
                           legend.text = element_text(size = 7),
                           legend.direction = "horizontal")
 
     # Making the colored plot ----
     if (!bw) {
+      
+    
 
     plott <- ggplot(df2, aes(x = week, y = fit)) +
       geom_bar(data = df2, aes(x = week, y = bar, width = 2),
@@ -58,6 +60,7 @@ plot_ufs_fac <- function(df,
       geom_point(aes(x = week, y = let_obs, color = age_clas), size = 0.6, alpha = 0.7) +
       scale_color_manual(values = pal, name = leg_title) +
       facet_wrap(~ sg_uf, ncol = 4, scales = "free") +
+      scale_x_date(breaks = as.Date(c("2020-05-09", "2020-11-14", "2021-06-05")),  date_labels = "%e/%m/%y")+
       geom_ribbon(aes(ymin = lwr,
                       ymax = upr,
                       fill = age_clas), alpha = 0.4) +
@@ -68,7 +71,7 @@ plot_ufs_fac <- function(df,
         name = y_lab,
         limits = c(0, 1),
         sec.axis = sec_axis(~ . * fac_lab)) +
-        theme(axis.text=element_text(size=20)) +
+        theme(axis.text=element_text(size=26)) +
         legend_theme
 
 
@@ -109,7 +112,7 @@ plot_ufs_fac <- function(df,
     # Saving plot ----
     if (!dir.exists("figs/ufs")) {dir.create("figs/ufs", recursive = TRUE)}
 
-    ggsave(filename = paste0("figs/ufs/", file_prefix, "_", uf, ".png"), width = 160, height = 100, units = "mm")
+    ggsave(filename = paste0("figs/ufs/", file_prefix, "_", uf, ".png"), width = 100, height = 60, units = "mm")
   }
   return(legenda)
 }
