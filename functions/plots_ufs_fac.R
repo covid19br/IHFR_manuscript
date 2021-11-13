@@ -19,8 +19,8 @@ plot_ufs_fac <- function(df,
                          file_prefix = "covid",
                          x_lab = "",
                          y_lab = "",
-                         axis_size = 16,
-                         strip_size = 16,
+                         axis_size = 18,
+                         strip_size = 18,
                          strip_color,
                          bw = FALSE,
                          pal = pal) {
@@ -39,7 +39,8 @@ plot_ufs_fac <- function(df,
                       axis.text = element_text(size = axis_size),
                       strip.text = element_text(hjust = 0, size = strip_size, color = strip_color),
                       strip.background = element_blank(),
-                      plot.margin = unit(c(0, 0, 0, 0.05), "cm"))
+                      plot.margin = unit(c(0, 0, 0, 0.05), "cm"),
+                      plot.title = element_text(size = 20, face = "bold", margin = margin(b=-20)))
 
     legend_theme <- theme(strip.background = element_blank(),
                           legend.position = c(2.0, 0.1),
@@ -50,8 +51,6 @@ plot_ufs_fac <- function(df,
     # Making the colored plot ----
     if (!bw) {
       
-    
-
     plott <- ggplot(df2, aes(x = week, y = fit)) +
       geom_bar(data = df2, aes(x = week, y = bar, width = 2),
                stat = "identity", fill = "gray",
@@ -72,6 +71,7 @@ plot_ufs_fac <- function(df,
         limits = c(0, 1),
         sec.axis = sec_axis(~ . * fac_lab)) +
         theme(axis.text=element_text(size=26)) +
+        ggtitle(uf)+
         legend_theme
 
 
@@ -100,6 +100,7 @@ plot_ufs_fac <- function(df,
           name = y_lab,
           limits = c(0, 1),
           sec.axis = sec_axis(~ . * fac_lab)) +
+        ggtitle(uf)
         legend_theme
 
     }
@@ -114,6 +115,6 @@ plot_ufs_fac <- function(df,
 
     ggsave(filename = paste0("figs/ufs/", file_prefix, "_", uf, ".png"), width = 100, height = 60, units = "mm")
   }
-  return(legenda)
+  #return(legenda)
 }
 

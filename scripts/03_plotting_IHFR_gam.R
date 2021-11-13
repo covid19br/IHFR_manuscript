@@ -9,6 +9,8 @@ library(readr)
 library(ggpubr)
 library(cowplot)
 library(magick)
+library(patchwork)
+
 # Also library libmagick++-dev needed
 
 # Loading functions
@@ -37,12 +39,12 @@ df$age_clas <- str_replace_all(df$age_clas, class_new)
 df$age_clas <- str_replace_all(df$age_clas, class_new)
 
 # Ordering states by letality
-uf_ordered <- df %>% filter(age_clas == "80 or over") %>%
-  group_by(sg_uf) %>%
-  summarise(max = max(fit)) %>%
-  arrange(desc(max)) %>%
-  select(sg_uf) %>%
-  pull()
+#uf_ordered <- df %>% filter(age_clas == "80 or over") %>%
+#  group_by(sg_uf) %>%
+#  summarise(max = max(fit)) %>%
+#  arrange(desc(max)) %>%
+#  select(sg_uf) %>%
+#  pull()
 
 
 # 1. Plotting for each state separately ----------------------------------------
@@ -84,21 +86,32 @@ for (i in 1:length(filename)) {
 
 # 2.2. Arranging and saving the main plot --------------------------------------
 
-tiff("figs/figure_01.tiff",
-     width = 200, height = 230, units = "mm", res = 300)
-ggarrange(
-  # by hand using ordered UF
-  #paste(uf_ordered, collapse = ", "),
-  SE, ES, RO, AM, PA, TO, PE, AP, RJ, MA, CE, AL, PB, MS, AC, RN, GO, BA, RS, PI, MT, SC, MG, PR, DF, SP,
-  nrow = 7,
-  ncol = 4,
-  left = "In-hospital mortality",
-  bottom = "Week",
-  labels = paste0(uf_ordered),
-  font.label = list(size = 10, face = "plain")
-)
-dev.off()
+layout<-'
+#AB###
+#CDEf#
+GHIJKL
+#MNOPQ
+#RStU#
+##VYX#
+##WZ##
+##a#l#
+'
 
+tiff("figs/figure_01.tiff",
+     width = 300, height = 260, units = "mm", res = 300)
+
+#  SE +  ES + RO + AM + PA + TO +  PE + AP + RJ + MA +
+#      CE + AL + PB + MS + AC + RN + GO + BA + RS +
+#      PI + MT + SC + MG + PR + DF + SP +
+#    plot_layout(ncol=4, guides= "colect")
+
+wrap_plots(A=RR, B=AP, C=AM, D=PA, E=MA, f=CE, 
+           G=AC, H= RO, I=TO, J=PI, K=PB, L=RN,
+           M=MT, N=GO, O=BA, P=PE, Q=AL, R=MS,
+           S=DF, t=MG, U=SE, V=SP, Y=RJ, X=ES, 
+           W=PR, Z=SC, a=RS, l=legenda, design = layout) 
+
+dev.off()
 
 # 3. Black and white plots -----------------------------------------------------
 
