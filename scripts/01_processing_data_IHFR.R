@@ -107,7 +107,7 @@ write.csv(tabela2,
 
 
 # 3. Summarizing SRAG hospitalizations -----------------------------------------
-hosp_week <- tabela2 %>%
+hosp_week <- srag %>%
   group_by(week, sg_uf) %>%
   summarise(hosp = n()) %>%
   #filter(week < 36 & week >= 10)
